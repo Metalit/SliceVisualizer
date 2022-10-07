@@ -6,5 +6,5 @@
 
 void Init();
 void SetColors(UnityEngine::Color leftColor, UnityEngine::Color rightColor);
-void CreateSlice(GlobalNamespace::NoteCutInfo& cutInfo, float overrideDistance);
+void CreateSlice(GlobalNamespace::NoteCutInfo& cutInfo);
 void Update();

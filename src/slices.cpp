@@ -76,7 +76,7 @@ UI::Image* CreateImage(Transform* parent, Sprite* sprite, std::string name) {
     return image;
 }
 
-void CreateSlice(NoteCutInfo& cutInfo, float overrideDistance) {
+void CreateSlice(NoteCutInfo& cutInfo) {
     static float spriteSize = 0.6;
     
     nextNoteTime = cutInfo.noteData->timeToNextColorNote;
@@ -116,7 +116,7 @@ void CreateSlice(NoteCutInfo& cutInfo, float overrideDistance) {
     auto trans = line->get_transform();
     trans->set_localScale({1/spriteSize, 1/spriteSize, 1/spriteSize});
     trans->set_localEulerAngles({0, 0, cutInfo.cutDirDeviation});
-    trans->set_localPosition({(overrideDistance * 120/spriteSize) - (2.3f/spriteSize), -2.3f/spriteSize, 0});
+    trans->set_localPosition({(cutInfo.cutDistanceToCenter * 120/spriteSize) - (2.3f/spriteSize), -2.3f/spriteSize, 0});
 
     cuts.emplace_back(Slice{
         .parent = parent->get_gameObject(),

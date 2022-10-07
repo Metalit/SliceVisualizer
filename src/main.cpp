@@ -12,8 +12,6 @@ Logger& getLogger() {
     return *logger;
 }
 
-float distanceToCenter;
-
 #include "GlobalNamespace/AudioTimeSyncController.hpp"
 
 MAKE_HOOK_MATCH(AudioTimeSyncController_Update, &AudioTimeSyncController::Update, void, AudioTimeSyncController* self) {
@@ -37,23 +35,10 @@ MAKE_HOOK_MATCH(AudioTimeSyncController_StartSong, &AudioTimeSyncController::Sta
 
 MAKE_HOOK_MATCH(NoteController_SendNoteWasCutEvent, &NoteController::SendNoteWasCutEvent, void, NoteController* self, ByRef<NoteCutInfo> noteCutInfo) {
 
-    if(noteCutInfo->get_allIsOK() && getModConfig().Enabled.GetValue())
-        CreateSlice(noteCutInfo.heldRef, distanceToCenter);
-        // CreateSlice(noteCutInfo.heldRef, noteCutInfo->cutDistanceToCenter);
+    if(noteCutInfo->get_allIsOK() && getModConfig().Enabled.GetValue() && self->noteData->gameplayType != NoteData::GameplayType::BurstSliderElement)
+        CreateSlice(noteCutInfo.heldRef);
 
     NoteController_SendNoteWasCutEvent(self, noteCutInfo);
-}
-
-#include "GlobalNamespace/GameNoteController.hpp"
-#include "UnityEngine/Plane.hpp"
-
-MAKE_HOOK_MATCH(GameNoteController_HandleBigWasCutBySaber, &GameNoteController::HandleBigWasCutBySaber, void, GameNoteController* self, Saber* saber, UnityEngine::Vector3 cutPoint, UnityEngine::Quaternion orientation, UnityEngine::Vector3 cutDirVec) {
-    
-    UnityEngine::Vector3 vector = orientation * UnityEngine::Vector3::get_up();
-    UnityEngine::Plane plane = {vector, cutPoint};
-    distanceToCenter = plane.GetDistanceToPoint(self->noteTransform->get_position());
-
-    GameNoteController_HandleBigWasCutBySaber(self, saber, cutPoint, orientation, cutDirVec);
 }
 
 #include "GlobalNamespace/GameplayCoreSceneSetupData.hpp"
@@ -82,7 +67,6 @@ extern "C" void load() {
     INSTALL_HOOK(getLogger(), AudioTimeSyncController_Update);
     INSTALL_HOOK(getLogger(), AudioTimeSyncController_StartSong);
     INSTALL_HOOK(getLogger(), NoteController_SendNoteWasCutEvent);
-    INSTALL_HOOK(getLogger(), GameNoteController_HandleBigWasCutBySaber);
     INSTALL_HOOK(getLogger(), GameplayCoreSceneSetupData_ctor);
     LOG_INFO("Installed all hooks!");
 }
