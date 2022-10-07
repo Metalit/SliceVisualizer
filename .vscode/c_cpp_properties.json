@@ -2,23 +2,26 @@
   "configurations": [
     {
       "defines": [
-        "MOD_ID=\"IntroSkip\"",
-        "VERSION=\"0.2.0\"",
+        "MOD_ID=\"slicevisualizer\"",
+        "VERSION=\"0.1.0\"",
         "__GNUC__",
-        "__aarch64__",
-        "ID=\"IntroSkip\""
+        "__aarch64__"
       ],
       "includePath": [
-        "${workspaceFolder}/**",
-        "c:/Program Files/Unity/Hub/Editor/2019.3.2f1/Editor/Data/il2cpp/libil2cpp",
-        "c:/Users/henwi/Desktop/ModdingBeatSaber/android-ndk-r20b/**",
-        "${workspaceFolder}/shared",
-        "${workspaceFolder}/extern"
+        "${workspaceFolder}/extern/includes/libil2cpp/il2cpp/libil2cpp", 
+        "${workspaceFolder}/extern/includes/codegen/include", 
+        "${workspaceFolder}/extern/includes", 
+        "${workspaceFolder}/include", 
+        "${workspaceFolder}/shared", 
+        "${workspaceFolder}",
+        
+        "${default}"
       ],
       "name": "Quest",
       "cStandard": "c11",
       "cppStandard": "c++20",
-      "intelliSenseMode": "clang-x64"
+      "intelliSenseMode": "clang-x64",
+      "compileCommands": "${workspaceFolder}/build/compile_commands.json"
     }
   ],
   "version": 4

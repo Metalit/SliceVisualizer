@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Lauriethefish/QuestPatcher.QMod/main/QuestPatcher.QMod/Resources/qmod.schema.json",
+  "_QPVersion": "0.1.1",
+  "name": "${mod_name}",
+  "id": "${mod_id}",
+  "author": "Henwill8, Metalit",
+  "version": "${version}",
+  "packageId": "com.beatgames.beatsaber",
+  "packageVersion": "1.24.0",
+  "description": "See your slices right in front of you",
+  "dependencies": [],
+  "modFiles": [],
+  "libraryFiles": [],
+  "fileCopies": []
+}
