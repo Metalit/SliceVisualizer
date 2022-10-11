@@ -96,7 +96,7 @@ void CreateSlice(NoteCutInfo& cutInfo) {
     parent->set_localEulerAngles({0, 0, NoteCutDirectionExtensions::RotationAngle(cutInfo.noteData->cutDirection)});
     auto pos = parent->get_transform()->get_position();
     auto newPos = spawnController->beatmapObjectSpawnMovementData->Get2DNoteOffset(cutInfo.noteData->lineIndex, cutInfo.noteData->noteLineLayer);
-    parent->get_transform()->set_position({newPos.x, pos.y + newPos.y, pos.z});
+    parent->get_transform()->set_position({pos.x + newPos.x, pos.y + newPos.y, pos.z});
     parent->get_transform()->set_localScale({spriteSize, spriteSize, spriteSize});
 
     auto background = CreateImage(parent, bgSprite, "SpriteImage");
