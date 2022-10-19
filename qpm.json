@@ -4,7 +4,7 @@
   "info": {
     "name": "Slice Visualizer",
     "id": "slicevisualizer",
-    "version": "5.0.0",
+    "version": "5.0.1",
     "url": null,
     "additionalData": {
       "overrideSoName": "libslicevisualizer.so"
@@ -13,7 +13,7 @@
   "dependencies": [
     {
       "id": "beatsaber-hook",
-      "versionRange": "^3.8.0",
+      "versionRange": "^3.14.0",
       "additionalData": {
         "extraFiles": [
           "src/inline-hook"
@@ -27,12 +27,12 @@
     },
     {
       "id": "codegen",
-      "versionRange": "^0.25.0",
+      "versionRange": "^0.28.0",
       "additionalData": {}
     },
     {
       "id": "questui",
-      "versionRange": "^0.16.4",
+      "versionRange": "^0.17.3",
       "additionalData": {}
     },
     {
