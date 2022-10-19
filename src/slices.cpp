@@ -112,7 +112,7 @@ void CreateSlice(NoteCutInfo& cutInfo) {
 
     auto line = CreateImage(background->get_transform(), nullptr, "CutLine");
     line->set_color(Color::get_black());
-    line->GetComponent<RectTransform*>()->set_sizeDelta({5, 300});
+    line->GetComponent<RectTransform*>()->set_sizeDelta({5, 100});
     auto trans = line->get_transform();
     trans->set_localScale({1/spriteSize, 1/spriteSize, 1/spriteSize});
     trans->set_localEulerAngles({0, 0, cutInfo.cutDirDeviation});
