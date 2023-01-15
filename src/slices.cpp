@@ -19,11 +19,21 @@ using namespace UnityEngine;
 using namespace QuestUI;
 
 struct Slice {
-    GameObject* parent;
+    SafePtrUnity<GameObject> parent;
     UI::Image* typeImage;
     UI::Image* backgroundImage;
     UI::Image* line;
     float opacity;
+    Slice& operator=(const Slice& other) {
+        // should get the constness fixed probably
+        if(other.parent.isAlive())
+            parent = const_cast<UnityEngine::GameObject*>(other.parent.ptr());
+        else
+            parent = nullptr;
+        typeImage = other.typeImage;
+        backgroundImage = other.backgroundImage;
+        return *this;
+    }
 };
 
 std::vector<Slice> cuts;
@@ -52,6 +62,7 @@ void MakeSprites() {
 }
 
 void Init() {
+    LOG_DEBUG("Initializing sprites and empty slices set");
     MakeSprites();
     cuts.clear();
     auto comboController = Resources::FindObjectsOfTypeAll<ComboUIController*>().Last();
@@ -77,8 +88,9 @@ UI::Image* CreateImage(Transform* parent, Sprite* sprite, std::string name) {
 }
 
 void CreateSlice(NoteCutInfo& cutInfo) {
+    LOG_DEBUG("Creating new slice");
     static float spriteSize = 0.6;
-    
+
     nextNoteTime = cutInfo.noteData->timeToNextColorNote;
 
     Sprite* bgSprite;
@@ -128,6 +140,7 @@ void CreateSlice(NoteCutInfo& cutInfo) {
 }
 
 void Update() {
+    LOG_DEBUG("updating slices, number: %lu", cuts.size());
     for(auto iter = cuts.begin(); iter != cuts.end(); iter++) {
         auto& cut = *iter;
         float dynamicMultiplier = 1;
@@ -135,9 +148,9 @@ void Update() {
             dynamicMultiplier = std::clamp(2 - (nextNoteTime * 1.5), 0.4, 2.0);
         float decrease = std::min(0.4f, 1.01f - cut.opacity);
         cut.opacity -= decrease * Time::get_deltaTime() * getModConfig().FadeSpeed.GetValue() * 8 * dynamicMultiplier;
-        if(cut.parent->m_CachedPtr.m_value != nullptr) {
+        if(cut.parent.isAlive()) {
             if(cut.opacity < 0) {
-                UnityEngine::Object::Destroy(cut.parent);
+                UnityEngine::Object::Destroy(cut.parent.ptr());
                 iter = cuts.erase(iter) - 1;
             } else {
                 auto color = cut.backgroundImage->get_color();
