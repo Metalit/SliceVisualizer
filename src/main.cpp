@@ -50,11 +50,24 @@ MAKE_HOOK_FIND_CLASS_UNSAFE_INSTANCE(GameplayCoreSceneSetupData_ctor, "", "Gamep
     GameplayCoreSceneSetupData_ctor(self, f1, f2, f3, f4, f5, f6, f7, colorScheme, f8);
 }
 
+void SettingsDidActivate(HMUI::ViewController* self, bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
+	if(firstActivation) {
+		auto vertical = QuestUI::BeatSaberUI::CreateVerticalLayoutGroup(self);
+		vertical->set_childControlHeight(false);
+		vertical->set_childForceExpandHeight(false);
+		vertical->set_spacing(1);
+
+		AddConfigValueToggle(vertical, getModConfig().Enabled);
+		AddConfigValueToggle(vertical, getModConfig().Dynamic);
+		AddConfigValueIncrementFloat(vertical, getModConfig().FadeSpeed, 1, 0.1, 0.1, 2);
+    }
+}
+
 extern "C" void setup(ModInfo& info) {
     info.id = MOD_ID;
     info.version = VERSION;
     modInfo = info;
-    
+
     getModConfig().Init(modInfo);
 }
 
