@@ -44,10 +44,10 @@ MAKE_HOOK_MATCH(NoteController_SendNoteWasCutEvent, &NoteController::SendNoteWas
 #include "GlobalNamespace/GameplayCoreSceneSetupData.hpp"
 #include "GlobalNamespace/ColorScheme.hpp"
 
-MAKE_HOOK_FIND_CLASS_UNSAFE_INSTANCE(GameplayCoreSceneSetupData_ctor, "", "GameplayCoreSceneSetupData", ".ctor", void, GameplayCoreSceneSetupData* self, IDifficultyBeatmap* f1, IPreviewBeatmapLevel* f2, GameplayModifiers* f3, PlayerSpecificSettings* f4, PracticeSettings* f5, bool f6, EnvironmentInfoSO* f7, ColorScheme* colorScheme, MainSettingsModelSO* f8)
+MAKE_HOOK_FIND_CLASS_UNSAFE_INSTANCE(GameplayCoreSceneSetupData_ctor, "", "GameplayCoreSceneSetupData", ".ctor", void, GameplayCoreSceneSetupData* self, IDifficultyBeatmap* f1, IPreviewBeatmapLevel* f2, GameplayModifiers* f3, PlayerSpecificSettings* f4, PracticeSettings* f5, bool f6, EnvironmentInfoSO* f7, ColorScheme* colorScheme, MainSettingsModelSO* f8, BeatmapDataCache* f9)
 {
     SetColors(colorScheme->get_saberAColor(), colorScheme->get_saberBColor());
-    GameplayCoreSceneSetupData_ctor(self, f1, f2, f3, f4, f5, f6, f7, colorScheme, f8);
+    GameplayCoreSceneSetupData_ctor(self, f1, f2, f3, f4, f5, f6, f7, colorScheme, f8, f9);
 }
 
 void SettingsDidActivate(HMUI::ViewController* self, bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
