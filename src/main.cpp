@@ -14,20 +14,28 @@ Logger& getLogger() {
 
 #include "GlobalNamespace/AudioTimeSyncController.hpp"
 
-MAKE_HOOK_MATCH(AudioTimeSyncController_Update, &AudioTimeSyncController::Update, void, AudioTimeSyncController* self) {
+MAKE_HOOK_MATCH(AudioTimeSyncController_Start, &AudioTimeSyncController::Start, void, AudioTimeSyncController* self) {
+
+    AudioTimeSyncController_Start(self);
 
     if(getModConfig().Enabled.GetValue())
-        Update();
-
-    AudioTimeSyncController_Update(self);
+        Init();
 }
 
 MAKE_HOOK_MATCH(AudioTimeSyncController_StartSong, &AudioTimeSyncController::StartSong, void, AudioTimeSyncController* self, float startTimeOffset) {
 
+    if(getModConfig().Enabled.GetValue())
+        MakeSprites();
+
     AudioTimeSyncController_StartSong(self, startTimeOffset);
+}
+
+MAKE_HOOK_MATCH(AudioTimeSyncController_Update, &AudioTimeSyncController::Update, void, AudioTimeSyncController* self) {
+
+    AudioTimeSyncController_Update(self);
 
     if(getModConfig().Enabled.GetValue())
-        Init();
+        Update();
 }
 
 #include "GlobalNamespace/NoteController.hpp"
@@ -44,9 +52,10 @@ MAKE_HOOK_MATCH(NoteController_SendNoteWasCutEvent, &NoteController::SendNoteWas
 #include "GlobalNamespace/GameplayCoreSceneSetupData.hpp"
 #include "GlobalNamespace/ColorScheme.hpp"
 
-MAKE_HOOK_FIND_CLASS_UNSAFE_INSTANCE(GameplayCoreSceneSetupData_ctor, "", "GameplayCoreSceneSetupData", ".ctor", void, GameplayCoreSceneSetupData* self, IDifficultyBeatmap* f1, IPreviewBeatmapLevel* f2, GameplayModifiers* f3, PlayerSpecificSettings* f4, PracticeSettings* f5, bool f6, EnvironmentInfoSO* f7, ColorScheme* colorScheme, MainSettingsModelSO* f8, BeatmapDataCache* f9)
-{
+MAKE_HOOK_FIND_CLASS_UNSAFE_INSTANCE(GameplayCoreSceneSetupData_ctor, "", "GameplayCoreSceneSetupData", ".ctor", void, GameplayCoreSceneSetupData* self, IDifficultyBeatmap* f1, IPreviewBeatmapLevel* f2, GameplayModifiers* f3, PlayerSpecificSettings* f4, PracticeSettings* f5, bool f6, EnvironmentInfoSO* f7, ColorScheme* colorScheme, MainSettingsModelSO* f8, BeatmapDataCache* f9) {
+
     SetColors(colorScheme->get_saberAColor(), colorScheme->get_saberBColor());
+
     GameplayCoreSceneSetupData_ctor(self, f1, f2, f3, f4, f5, f6, f7, colorScheme, f8, f9);
 }
 
@@ -77,8 +86,9 @@ extern "C" void load() {
     QuestUI::Register::RegisterModSettingsViewController(modInfo, SettingsDidActivate);
 
     LOG_INFO("Installing hooks...");
-    INSTALL_HOOK(getLogger(), AudioTimeSyncController_Update);
+    INSTALL_HOOK(getLogger(), AudioTimeSyncController_Start);
     INSTALL_HOOK(getLogger(), AudioTimeSyncController_StartSong);
+    INSTALL_HOOK(getLogger(), AudioTimeSyncController_Update);
     INSTALL_HOOK(getLogger(), NoteController_SendNoteWasCutEvent);
     INSTALL_HOOK(getLogger(), GameplayCoreSceneSetupData_ctor);
     LOG_INFO("Installed all hooks!");

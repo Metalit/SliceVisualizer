@@ -19,21 +19,11 @@ using namespace UnityEngine;
 using namespace QuestUI;
 
 struct Slice {
-    SafePtrUnity<GameObject> parent;
+    GameObject* parent;
     UI::Image* typeImage;
     UI::Image* backgroundImage;
     UI::Image* line;
     float opacity;
-    Slice& operator=(const Slice& other) {
-        // should get the constness fixed probably
-        if(other.parent.isAlive())
-            parent = const_cast<UnityEngine::GameObject*>(other.parent.ptr());
-        else
-            parent = nullptr;
-        typeImage = other.typeImage;
-        backgroundImage = other.backgroundImage;
-        return *this;
-    }
 };
 
 std::vector<Slice> cuts;
@@ -53,6 +43,7 @@ Color leftColor;
 Color rightColor;
 
 void MakeSprites() {
+    LOG_INFO("Initializing sprites");
     arrowSprite = BeatSaberUI::Base64ToSprite(arrowBase64);
     dotSprite = BeatSaberUI::Base64ToSprite(dotBase64);
     arrowBackgroundSprite = BeatSaberUI::Base64ToSprite(arrowBackgroundBase64);
@@ -62,8 +53,7 @@ void MakeSprites() {
 }
 
 void Init() {
-    LOG_DEBUG("Initializing sprites and empty slices set");
-    MakeSprites();
+    LOG_INFO("Initializing empty slices set");
     cuts.clear();
     auto comboController = Resources::FindObjectsOfTypeAll<ComboUIController*>().Last();
     mainGO = GameObject::New_ctor("SliceVisualizerGO")->get_transform();
@@ -72,7 +62,7 @@ void Init() {
     mainGO->SetParent(comboController->get_transform(), true);
 }
 
-void SetColors(UnityEngine::Color leftCol, UnityEngine::Color rightCol) {
+void SetColors(Color leftCol, Color rightCol) {
     leftColor = leftCol;
     rightColor = rightCol;
 }
@@ -88,7 +78,6 @@ UI::Image* CreateImage(Transform* parent, Sprite* sprite, std::string name) {
 }
 
 void CreateSlice(NoteCutInfo& cutInfo) {
-    LOG_DEBUG("Creating new slice");
     static float spriteSize = 0.6;
 
     nextNoteTime = cutInfo.noteData->timeToNextColorNote;
@@ -106,10 +95,10 @@ void CreateSlice(NoteCutInfo& cutInfo) {
     auto parent = GameObject::New_ctor("SliceGraphics")->get_transform();
     parent->SetParent(mainGO, false);
     parent->set_localEulerAngles({0, 0, NoteCutDirectionExtensions::RotationAngle(cutInfo.noteData->cutDirection)});
-    auto pos = parent->get_transform()->get_position();
+    auto pos = parent->get_position();
     auto newPos = spawnController->beatmapObjectSpawnMovementData->Get2DNoteOffset(cutInfo.noteData->lineIndex, cutInfo.noteData->noteLineLayer);
-    parent->get_transform()->set_position({pos.x + newPos.x, pos.y + newPos.y, pos.z});
-    parent->get_transform()->set_localScale({spriteSize, spriteSize, spriteSize});
+    parent->set_position({pos.x + newPos.x, pos.y + newPos.y, pos.z});
+    parent->set_localScale({spriteSize, spriteSize, spriteSize});
 
     auto background = CreateImage(parent, bgSprite, "SpriteImage");
     ColorType colorType = cutInfo.noteData->colorType;
@@ -130,7 +119,7 @@ void CreateSlice(NoteCutInfo& cutInfo) {
     trans->set_localEulerAngles({0, 0, cutInfo.cutDirDeviation});
     trans->set_localPosition({(cutInfo.cutDistanceToCenter * 120/spriteSize) - (2.3f/spriteSize), -2.3f/spriteSize, 0});
 
-    cuts.emplace_back(Slice{
+    cuts.push_back(Slice{
         .parent = parent->get_gameObject(),
         .typeImage = arrow,
         .backgroundImage = background,
@@ -148,18 +137,15 @@ void Update() {
             dynamicMultiplier = std::clamp(2 - (nextNoteTime * 1.5), 0.4, 2.0);
         float decrease = std::min(0.4f, 1.01f - cut.opacity);
         cut.opacity -= decrease * Time::get_deltaTime() * getModConfig().FadeSpeed.GetValue() * 8 * dynamicMultiplier;
-        if(cut.parent.isAlive()) {
-            if(cut.opacity < 0) {
-                UnityEngine::Object::Destroy(cut.parent.ptr());
-                iter = cuts.erase(iter) - 1;
-            } else {
-                auto color = cut.backgroundImage->get_color();
-                color.a = cut.opacity;
-                cut.backgroundImage->set_color(color);
-                cut.typeImage->set_color({1, 1, 1, cut.opacity});
-                cut.line->set_color({0, 0, 0, cut.opacity * 2.2f});
-            }
-        } else
+        if(cut.opacity < 0) {
+            Object::Destroy(cut.parent);
             iter = cuts.erase(iter) - 1;
+        } else {
+            auto color = cut.backgroundImage->get_color();
+            color.a = cut.opacity;
+            cut.backgroundImage->set_color(color);
+            cut.typeImage->set_color({1, 1, 1, cut.opacity});
+            cut.line->set_color({0, 0, 0, cut.opacity * 2.2f});
+        }
     }
 }
