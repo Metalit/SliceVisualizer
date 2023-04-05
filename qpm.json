@@ -4,7 +4,7 @@
   "info": {
     "name": "Slice Visualizer",
     "id": "slicevisualizer",
-    "version": "5.0.2",
+    "version": "5.0.3",
     "url": null,
     "additionalData": {
       "overrideSoName": "libslicevisualizer.so"
@@ -26,11 +26,6 @@
       "additionalData": {}
     },
     {
-      "id": "codegen",
-      "versionRange": "^0.32.0",
-      "additionalData": {}
-    },
-    {
       "id": "questui",
       "versionRange": "^0.17.3",
       "additionalData": {}
@@ -43,6 +38,11 @@
     {
       "id": "custom-types",
       "versionRange": "^0.15.21",
+      "additionalData": {}
+    },
+    {
+      "id": "codegen",
+      "versionRange": "^0.33.0",
       "additionalData": {}
     }
   ],
