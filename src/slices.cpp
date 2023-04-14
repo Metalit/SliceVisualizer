@@ -55,7 +55,7 @@ void MakeSprites() {
 void Init() {
     LOG_INFO("Initializing empty slices set");
     cuts.clear();
-    auto comboController = Resources::FindObjectsOfTypeAll<ComboUIController*>().Last();
+    auto comboController = UnityEngine::Object::FindObjectOfType<ComboUIController*>();
     mainGO = GameObject::New_ctor("SliceVisualizerGO")->get_transform();
     mainGO->set_position({0, 3, 15});
     mainGO->set_localScale({0.01, 0.01, 0.01});
