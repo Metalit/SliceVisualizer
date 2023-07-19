@@ -12,20 +12,22 @@ Logger& getLogger() {
     return *logger;
 }
 
+bool successfulInit = true;
+
 #include "GlobalNamespace/AudioTimeSyncController.hpp"
 
 MAKE_HOOK_MATCH(AudioTimeSyncController_Start, &AudioTimeSyncController::Start, void, AudioTimeSyncController* self) {
 
     AudioTimeSyncController_Start(self);
 
-    if(getModConfig().Enabled.GetValue())
-        Init();
+    if(getModConfig().Enabled.GetValue() && successfulInit)
+        successfulInit = Init();
 }
 
 MAKE_HOOK_MATCH(AudioTimeSyncController_StartSong, &AudioTimeSyncController::StartSong, void, AudioTimeSyncController* self, float startTimeOffset) {
 
-    if(getModConfig().Enabled.GetValue())
-        MakeSprites();
+    if(getModConfig().Enabled.GetValue() && successfulInit)
+        successfulInit = MakeSprites();
 
     AudioTimeSyncController_StartSong(self, startTimeOffset);
 }
@@ -34,7 +36,7 @@ MAKE_HOOK_MATCH(AudioTimeSyncController_Update, &AudioTimeSyncController::Update
 
     AudioTimeSyncController_Update(self);
 
-    if(getModConfig().Enabled.GetValue())
+    if(getModConfig().Enabled.GetValue() && successfulInit)
         Update();
 }
 
@@ -43,7 +45,7 @@ MAKE_HOOK_MATCH(AudioTimeSyncController_Update, &AudioTimeSyncController::Update
 
 MAKE_HOOK_MATCH(NoteController_SendNoteWasCutEvent, &NoteController::SendNoteWasCutEvent, void, NoteController* self, ByRef<NoteCutInfo> noteCutInfo) {
 
-    if(noteCutInfo->get_allIsOK() && getModConfig().Enabled.GetValue() && self->noteData->gameplayType != NoteData::GameplayType::BurstSliderElement)
+    if(getModConfig().Enabled.GetValue() && successfulInit && noteCutInfo->get_allIsOK() && self->noteData->gameplayType != NoteData::GameplayType::BurstSliderElement)
         CreateSlice(noteCutInfo.heldRef);
 
     NoteController_SendNoteWasCutEvent(self, noteCutInfo);
@@ -55,6 +57,7 @@ MAKE_HOOK_MATCH(NoteController_SendNoteWasCutEvent, &NoteController::SendNoteWas
 MAKE_HOOK_FIND_CLASS_UNSAFE_INSTANCE(GameplayCoreSceneSetupData_ctor, "", "GameplayCoreSceneSetupData", ".ctor", void, GameplayCoreSceneSetupData* self, IDifficultyBeatmap* f1, IPreviewBeatmapLevel* f2, GameplayModifiers* f3, PlayerSpecificSettings* f4, PracticeSettings* f5, bool f6, EnvironmentInfoSO* f7, ColorScheme* colorScheme, MainSettingsModelSO* f8, BeatmapDataCache* f9) {
 
     SetColors(colorScheme->get_saberAColor(), colorScheme->get_saberBColor());
+    successfulInit = true;
 
     GameplayCoreSceneSetupData_ctor(self, f1, f2, f3, f4, f5, f6, f7, colorScheme, f8, f9);
 }

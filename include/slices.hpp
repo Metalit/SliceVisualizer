@@ -4,8 +4,8 @@
 
 #include "UnityEngine/Color.hpp"
 
-void Init();
-void MakeSprites();
+bool Init();
+bool MakeSprites();
 void SetColors(UnityEngine::Color leftColor, UnityEngine::Color rightColor);
 void CreateSlice(GlobalNamespace::NoteCutInfo& cutInfo);
 void Update();

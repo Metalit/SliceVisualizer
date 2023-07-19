@@ -42,24 +42,32 @@ BeatmapObjectSpawnController* spawnController;
 Color leftColor;
 Color rightColor;
 
-void MakeSprites() {
+bool MakeSprites() {
     LOG_INFO("Initializing sprites");
     arrowSprite = BeatSaberUI::Base64ToSprite(arrowBase64);
     dotSprite = BeatSaberUI::Base64ToSprite(dotBase64);
     arrowBackgroundSprite = BeatSaberUI::Base64ToSprite(arrowBackgroundBase64);
     dotBackgroundSprite = BeatSaberUI::Base64ToSprite(dotBackgroundBase64);
     spriteMaterial = Resources::FindObjectsOfTypeAll<Material*>().First([](auto x) { return x->get_name() == "UINoGlow"; });
-    spawnController = Resources::FindObjectsOfTypeAll<BeatmapObjectSpawnController*>().First();
+    if(!spriteMaterial)
+        return false;
+    spawnController = Resources::FindObjectsOfTypeAll<BeatmapObjectSpawnController*>().FirstOrDefault();
+    if(!spawnController)
+        return false;
+    return true;
 }
 
-void Init() {
+bool Init() {
     LOG_INFO("Initializing empty slices set");
     cuts.clear();
     auto comboController = UnityEngine::Object::FindObjectOfType<ComboUIController*>();
+    if(!comboController)
+        return false;
     mainGO = GameObject::New_ctor("SliceVisualizerGO")->get_transform();
     mainGO->set_position({0, 3, 15});
     mainGO->set_localScale({0.01, 0.01, 0.01});
     mainGO->SetParent(comboController->get_transform(), true);
+    return true;
 }
 
 void SetColors(Color leftCol, Color rightCol) {
