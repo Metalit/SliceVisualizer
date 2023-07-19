@@ -4,7 +4,7 @@
   "info": {
     "name": "Slice Visualizer",
     "id": "slicevisualizer",
-    "version": "5.0.3",
+    "version": "5.0.4",
     "url": null,
     "additionalData": {
       "overrideSoName": "libslicevisualizer.so"
