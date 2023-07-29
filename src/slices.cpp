@@ -102,7 +102,8 @@ void CreateSlice(NoteCutInfo& cutInfo) {
 
     auto parent = GameObject::New_ctor("SliceGraphics")->get_transform();
     parent->SetParent(mainGO, false);
-    parent->set_localEulerAngles({0, 0, NoteCutDirectionExtensions::RotationAngle(cutInfo.noteData->cutDirection)});
+    float rot = NoteCutDirectionExtensions::RotationAngle(cutInfo.noteData->cutDirection) + cutInfo.noteData->cutDirectionAngleOffset;
+    parent->set_localEulerAngles({0, 0, rot});
     auto pos = parent->get_position();
     auto newPos = spawnController->beatmapObjectSpawnMovementData->Get2DNoteOffset(cutInfo.noteData->lineIndex, cutInfo.noteData->noteLineLayer);
     parent->set_position({pos.x + newPos.x, pos.y + newPos.y, pos.z});
